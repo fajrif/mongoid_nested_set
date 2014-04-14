@@ -1,4 +1,4 @@
-
+require 'rails'
 require 'mongoid_nested_set/remove_order_by'
 
 # This acts provides Nested Set functionality.  Nested Set is a smart way to implement
@@ -27,6 +27,7 @@ module Mongoid
       autoload :Update,        'mongoid_nested_set/update'
       autoload :Validation,    'mongoid_nested_set/validation'
       autoload :OutlineNumber, 'mongoid_nested_set/outline_number'
+      autoload :Helper,        'mongoid_nested_set/helper'
 
       def self.included(base)
         base.extend(Base)
@@ -38,3 +39,11 @@ end
 
 # Enable the acts_as_nested_set method
 Mongoid::Document::ClassMethods.send(:include, Mongoid::Acts::NestedSet::Base)
+
+class Railtie < ::Rails::Railtie
+  config.before_initialize do
+    ActiveSupport.on_load :action_view do
+      ActionView::Base.send(:include, Mongoid::Acts::NestedSet::Helper)
+    end
+  end
+end
